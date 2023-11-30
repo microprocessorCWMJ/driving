@@ -10,6 +10,7 @@ const double RADIAN_TO_DEGREE = 180 / 3.14159;
 // If users change the button to park, driving mode must be false.
 bool driving_mode = true;
 // If white color is repetitively detected, on_the_crosswalk flag is set.
+// It names "on_the_crosswalk", but it is also setted when user is changing lane repetitivley.
 bool on_the_crosswalk = true;
 // If ultrasound is detected objects repetitively, many_objects_around flag is set.
 bool many_objects_around = true;
