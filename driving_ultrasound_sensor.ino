@@ -1,7 +1,6 @@
 //pin numbers should be matched in every code
-
-#define LeftFrontpinTrig 30
-#define LeftFrontpinEcho 32
+#define LeftFrontpinTrig 22
+#define LeftFrontpinEcho 24
 
 // We temporarily implemented this code with only one sensor.
 // It will be updated by 4 sensors version
@@ -32,34 +31,35 @@ double measureDistanceCm_LeftFront(){
   return cm_front;
 }
 
+// Determine whether many_objects_around_LeftFront flag sets, or clears.
 void set_many_objects_around_LeftFront(){
   double distance_front = measureDistanceCm_LeftFront();
-  if(distance_front < 1000){
+
+  //Ensuring that there is no distance error or The area that you are in is not a flat region.
+  if(distance_front < 1000 && distance_front > 0){
+    
+    // There is an object, or many objects around you!
     if(distance_front <= 50){
       current_time_for_object_detection = millis();
       if(current_time_for_object_detection - previous_time_for_object_detection < 5000){
         many_objects_around_LeftFront = true;
         Serial.println(distance_front);
         Serial.println("There are many objects around you.");
-      }  
+      }
+
       previous_time_for_object_detection = current_time_for_object_detection;
     }
-  }
-  if(distance_front > 50){
-    current_time_for_object_detection_end = millis();
-    if(previous_time_for_object_detection == current_time_for_object_detection){
+    
+    // There is no objects around you
+    else if(distance_front > 50){
+      current_time_for_object_detection_end = millis();
       if(current_time_for_object_detection_end - previous_time_for_object_detection_end >= 10000){
         many_objects_around_LeftFront = false;
         Serial.println("There are no objects that are detected.");
         previous_time_for_object_detection_end = current_time_for_object_detection_end;
       }
     }
-    else{
-      current_time_for_object_detection_end = 0;
-      previous_time_for_object_detection_end = 0;
-    }
   }
-  
 }
 
 void setup() {
@@ -74,4 +74,11 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   set_many_objects_around_LeftFront();
+  
+  if(parking_complete){
+    current_time_for_object_detection = 0.0;
+    previous_time_for_object_detection = 0.0;
+    current_time_for_object_detection_end = 0.0;
+    previous_time_for_object_detection_end = 0.0;
+  }
 }
