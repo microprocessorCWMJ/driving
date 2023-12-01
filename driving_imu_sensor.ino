@@ -40,7 +40,7 @@ double getAngleXY() {
 void initSensor() {
   Wire.begin();
   Wire.beginTransmission(MPU_ADDR);   // Address for I2C communication
-  Wire.write(0x6B);    // write on 0x6B for communication with MPU6050
+  Wire.write(0x6B);    // Write on 0x6B for communication with MPU6050
   Wire.write(0);
   Wire.endTransmission(true);
 }
@@ -49,8 +49,8 @@ void getData() {
   Wire.beginTransmission(MPU_ADDR);
   Wire.write(0x3B);   // AcX register address
   Wire.endTransmission(false);
-  Wire.requestFrom(MPU_ADDR, 14, true);  // AcX 주소 이후의 14byte의 데이터를 요청
-  AcX = Wire.read() << 8 | Wire.read(); //두 개의 나뉘어진 바이트를 하나로 이어 붙여서 각 변수에 저장
+  Wire.requestFrom(MPU_ADDR, 14, true); // Request 14 bytes of data after AcX address
+  AcX = Wire.read() << 8 | Wire.read(); // Connect two separate bytes into one and store them in each variable
   AcY = Wire.read() << 8 | Wire.read();
   AcZ = Wire.read() << 8 | Wire.read();
   Tmp = Wire.read() << 8 | Wire.read();
@@ -90,8 +90,6 @@ void loop() {
 
         Serial.print("근거리에 물체가 다수 포착, 난폭 운전 적발. 위험 운전 총합 3회 이상 적발 시 강력 제재 예정: ");
         Serial.println(warning_count);
-        current_time = 0.0;
-        previous_time = 0.0;
         count = 0;
       }
       else{
@@ -99,8 +97,6 @@ void loop() {
         
         Serial.print("위험 운전 적발. 위험 운전 총합 3회 이상 적발 시 제재 예정");
         Serial.println(warning_count);
-        current_time = 0.0;
-        previous_time = 0.0;
         count = 0;
       }
     }
