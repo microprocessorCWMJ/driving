@@ -59,12 +59,7 @@ void getData() {
   GyZ = Wire.read() << 8 | Wire.read();
 }
 
-// We only use SCL, SDA pins because we will only use I2C communication.
-void setup() {
-  Serial.begin(9600);
-}
-
-void loop() {
+void detect_dangerous_driving(){
   if(driving_mode && on_the_crosswalk){
     initSensor();
     getAngleXY(); 
@@ -119,6 +114,15 @@ void loop() {
       recklessness_count = 0;
     }
   }
+}
+
+// We only use SCL, SDA pins because we will only use I2C communication.
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  detect_dangerous_driving();
 }
 
 
