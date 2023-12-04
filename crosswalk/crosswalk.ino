@@ -28,6 +28,7 @@ bool driving_mode = true;
 bool on_the_crosswalk = false;
 bool previous_color_white = false;
 bool crosswalk_flag = false;
+bool white_flag = false;
 
 void setup() {
   pinMode(S2, OUTPUT);    
@@ -76,61 +77,57 @@ void crosswalk(){
   totval = redValue + greenValue + blueValue;
   
   if(totval >= 660){ //흰색일시 시작
+    white_flag = true;
+  }
 
-    white_start_time = millis();
-    current_time = millis();
-    previous_time = current_time;
-    previous_color_white = true;
-    
+  white_start_time = millis();
+  previous_time = millis();
+  previous_color_white = true;
+  
+  if(white_flag==true){
     Serial.println("detecting_crosswalk_speed");
+    while(millis() - previous_time <= 5000){ //50초 동안.(set as 5 seconds for debugging)
 
-    while(current_time - previous_time <= 5000){ //50초 동안.(set as 5 seconds for debugging)
-      
       Red = getRed();
       redValue = map(Red, R_Min,R_Max,255,0); // all of the values need to be calibrated. This is temporay value. 
       //We should add calibrating code or We should set the min & max value by hand.
       delay(10);
- 
+
       Green = getGreen();
       greenValue = map(Green, G_Min,G_Max,255,0);
       delay(10);
- 
+
       Blue = getBlue();
       blueValue = map(Blue, B_Min,B_Max,255,0); 
       delay(10);
-      
+
       totval = redValue + greenValue + blueValue;
-      
+
       if(previous_color_white && totval <= 60){
         white_time = millis() - white_start_time;
         black_start_time = millis();
         previous_color_white = false;
         count+=1;
       }
-
       else if(!previous_color_white && totval >=660){
         black_time = millis() - black_start_time;
         white_start_time = millis();
         previous_color_white = true;
         count+=1;
       }
-
       if(white_time<280 || black_time<420){
         warning_count+=1;
       }
-
       if(count>7){
         Serial.println("Passed Crosswalk or Passing Crosswalk");
-
         if(warning_count>9){
           Serial.println("STOP driving on the crosswalk");
         }
       }
-
       else{
         Serial.println("Not on Crosswalk");
+        white_flag==false;
       }
-
     }
   }
 }
