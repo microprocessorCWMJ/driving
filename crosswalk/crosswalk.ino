@@ -37,36 +37,6 @@ void setup() {
   delay(1000);
 }
 
-void loop() {
-  Red = getRed();
-  redValue = map(Red, R_Min,R_Max,255,0); // all of the values need to be calibrated. This is temporay value. 
-  //We should add calibrating code or We should set the min & max value by hand.
-  delay(10);
- 
-  Green = getGreen();
-  greenValue = map(Green, G_Min,G_Max,255,0);
-  delay(10);
- 
-  Blue = getBlue();
-  blueValue = map(Blue, B_Min,B_Max,255,0); 
-  delay(10);
-
-  Serial.print("Red = ");
-  Serial.print(redValue);  
-  Serial.print("    ");
-  Serial.print("Green = ");
-  Serial.print(greenValue); 
-  Serial.print("    ");
-  Serial.print("Blue = ");
-  Serial.println(blueValue);
-  //delay(200);   
-
-  drive();
-
-}
-
-
-
 int getRed() {
   digitalWrite(S2,LOW);
   digitalWrite(S3,LOW);
@@ -88,15 +58,8 @@ int getBlue() {
   return Frequency;
 }
 
-int drive() {
 
-  Serial.println("Now Driving");
-  totval = redValue + greenValue + blueValue;
-  detecting_crosswalk_speed();
-
-}
-
-int detecting_crosswalk_speed(){
+void crosswalk(){
   uint16_t white_time = 0, black_time = 0, white_start_time = 0, black_start_time = 0;
 
   Red = getRed();
@@ -171,3 +134,11 @@ int detecting_crosswalk_speed(){
     }
   }
 }
+
+void loop() {
+
+  crosswalk();
+  
+}
+
+
