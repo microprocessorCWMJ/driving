@@ -29,6 +29,8 @@ bool on_the_crosswalk = false;
 bool previous_color_white = false;
 bool crosswalk_flag = false;
 bool white_flag = false;
+bool conv1 = true;
+
 
 void setup() {
   pinMode(S2, OUTPUT);    
@@ -62,7 +64,7 @@ int getBlue() {
 
 void crosswalk(){
   uint16_t white_time = 0, black_time = 0, white_start_time = 0, black_start_time = 0;
-
+  
   Red = getRed();
   redValue = map(Red, R_Min,R_Max,255,0); // all of the values need to be calibrated. This is temporay value. 
   //We should add calibrating code or We should set the min & max value by hand.
@@ -79,14 +81,24 @@ void crosswalk(){
   if(totval >= 660){ //흰색일시 시작
     white_flag = true;
   }
+  if(white_flag == true && conv1 == true){
+    white_start_time = millis();
+    previous_time = millis();
+    previous_color_white = true;
+    conv1 = false;
+  }
 
-  white_start_time = millis();
-  previous_time = millis();
-  previous_color_white = true;
   
   if(white_flag==true){
+    
+    if(conv1 == true){
+      white_start_time = millis();
+      previous_time = millis();
+      previous_color_white = true;
+      conv1 = false;
+    }
     Serial.println("detecting_crosswalk_speed");
-    while(millis() - previous_time <= 5000){ //50초 동안.(set as 5 seconds for debugging)
+    if(millis() - previous_time <= 5000){ //50초 동안.(set as 5 seconds for debugging)
 
       Red = getRed();
       redValue = map(Red, R_Min,R_Max,255,0); // all of the values need to be calibrated. This is temporay value. 
@@ -128,6 +140,11 @@ void crosswalk(){
         Serial.println("Not on Crosswalk");
         white_flag==false;
       }
+    }
+    else{
+      previous_time = millis();
+      count=0;
+      warning_count=0;      
     }
   }
 }
